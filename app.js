@@ -51,33 +51,16 @@ app.get("/login", (req, res) => {
 });
 app.get("/quote", async (req, res) => {
   const uu = req.cookies.session;
-  if (uu) {
-    try {
-      const verified = jsw.verify(uu, secretkey);
-      if (verified) {
-        const { data } = await axios.get("https://dummyjson.com/quotes");
-        res.json({
-          status: 200,
-          data,
-          verified: verified,
-        });
-      } else {
-        res.json({
-          status: 400,
-          massage: "not verified user",
-        });
-      }
-    } catch (err) {
-      res.json({
-        status: 500,
-        massage: "server error",
-      });
-    }
-  } else {
+  if (!uu) return res.json({ status: 400, massage: "not veriffied" });
+  try {
+    const { data } = await axios.get("https://dummyjson.com/quotes/random");
+    if (!data) return res.json({ status: 500, massage: "server error" });
     res.json({
-      status: 400,
-      massage: "not verified user",
+      status: 200,
+      data,
     });
+  } catch (err) {
+    res.json({ status: 500, massage: "server error" });
   }
 });
 app.listen(3000, () => {

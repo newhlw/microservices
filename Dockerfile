@@ -1,17 +1,19 @@
-#Sample Dockerfile for NodeJS Apps
+# Use Node.js v14
+FROM node:14
 
-FROM node:16
+# Create app directory
+WORKDIR /usr/src/app
 
-ENV NODE_ENV=production
+# Install app dependencies
+# A wildcard is used to ensure both package.json AND package-lock.json are copied
+COPY package*.json ./
 
-WORKDIR /app
+RUN npm install
 
-COPY ["package.json", "package-lock.json*", "./"]
-
-RUN npm install --production
-
+# Bundle app source
 COPY . .
 
-EXPOSE 8080
+# Expose the port
+EXPOSE 3000
 
-CMD [ "node", "index.js" ]
+CMD [ "node", "app.js" ]
